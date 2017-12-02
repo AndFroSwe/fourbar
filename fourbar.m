@@ -22,8 +22,8 @@ function m = J(b4)
 % Parameters:
 % b4: Four bar geometry struct
 
-m = [-b4.rs*sin(b4.crosslink_a), -b4.rj*sin(b4.output_a);
-    -b4.rs*cos(b4.crosslink_a), -b4.rj*cos(b4.output_a)];
+m = [-b4.rj*sin(b4.output_a), -b4.rs*sin(b4.crosslink_a);
+    -b4.rj*cos(b4.output_a), -b4.rs*cos(b4.crosslink_a)];
 
 endfunction
 
@@ -33,31 +33,43 @@ r = d*pi/180;
 
 endfunction
 
+function d = rad2deg(r)
+% Converts radians to degrees
+d = r*180/pi;
+
+endfunction
+
 function x = n_r_fourbar(b4)
 % Newton Rhapson solver for non linear equation in four bar geometry
 % Input
 
-delta = 0.1; % Accuracy of solver
+delta = 0.001; % Accuracy of solver
 max_it = 10; % Maximum number of iterations
 it = 0; % Number of done interations
 x = [b4.output_a; b4.crosslink_a];
-b4_temp = b4 % Temporary struct
-dx = [1; 1] % Step. Dummy values
+b4_temp = b4; % Temporary struct
+dx = [1; 1]; % Step. Dummy values
 
 printf('Starting values: \n output_a: %0.2f rad \n crosslink_a: %0.2f rad\n', x(1), x(2))
 
 % Solver iteration
-while ((abs(dx(1)) > delta && abs(dx(2)) > delta) || it < max_it)
+while ((sqrt(dx(1)^2 + dx(2)^2) > delta) && it < max_it)
     % Fill temporary struct with values for x
+    printf('*** Loop %d ***\n', it);
     b4_temp.output_a = x(1);
     b4_temp.crosslink_a = x(2);
 
     % Calculate dx
-    dx = -inv(J(b4_temp))*f(b4_temp)
+    dx = -inv(J(b4_temp))*f(b4_temp);
+    printf('x0 = [%0.2f, %0.2f] degrees\n', rad2deg(x(1)), rad2deg(x(2)))
+    printf('dx = [%0.2f, %0.2f] degrees\n', rad2deg(dx(1)), rad2deg(dx(2)))
 
-    x = x + dx % Update x
+    x = x + dx; % Update x
 
-    it++
+    printf('x1 = [%0.2f, %0.2f] degrees\n', rad2deg(x(1)), rad2deg(x(2)))
+
+    disp('----------------------------------')
+    it++;
 end
 
 endfunction
@@ -75,7 +87,7 @@ b4.rl = 60; % Link length
 b4.rj = 50; % Jaw length
 b4.rs = 70; % Shank length
 % Angles
-b4.input_a = deg2rad(180-73.93); % Input angle to system. Independent variable
+b4.input_a = deg2rad(180-65); % Input angle to system. Independent variable
 b4.output_a = deg2rad(80); % Ángle between frame and jaw. Initial guess for solver
 b4.crosslink_a = deg2rad(10); % Anlge between frame and shank. Initial guess for solver
 
@@ -86,9 +98,9 @@ b4.crosslink_a = deg2rad(10); % Anlge between frame and shank. Initial guess for
 %b4.rj = 50; % Jaw length
 %b4.rs = 70; % Shank length
 % Angles
-%b4.input_a = deg2rad(180-73.93); % Input angle to system. Independent variable
-%b4.output_a = deg2rad(73.6551); % Ángle between frame and jaw. Initial guess for solver
-%b4.crosslink_a = deg2rad(7.94727); % Anlge between frame and shank. Initial guess for solver
+%b4.input_a = deg2rad(180-70); % Input angle to system. Independent variable
+%b4.output_a = deg2rad(78.61); % Ángle between frame and jaw. Initial guess for solver
+%b4.crosslink_a = deg2rad(6.04); % Anlge between frame and shank. Initial guess for solver
 
 disp('************************************')
 disp('Program done!')
