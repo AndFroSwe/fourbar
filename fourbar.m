@@ -106,11 +106,13 @@ disp('Calculating and plotting positions')
 input_min = deg2rad(90)
 input_max = deg2rad(130)
 
-figure
+hf = figure('visible', 'off');
 axis([-10 110 -100 10])
 axis manual
 
-for i = input_min:0.01:input_max
+angles = input_min:0.01:input_max;
+for ii = 1:length(angles) % Ugly quick fix
+    i = angles(ii); % Ugly quick fix
     axis([-10 110 -100 10])
     axis manual
     % Get angles 
@@ -133,8 +135,12 @@ for i = input_min:0.01:input_max
     pause(0.1)
     drawnow
 
-    hold off
-    plot([0])
+    plname = sprintf('./images/fourbar%d.png', ii);
+    print(hf, plname, "-dpng")
+
+    hold off 
+    plot([1])
+
 
 endfor
 
