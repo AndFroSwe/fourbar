@@ -82,10 +82,10 @@ disp('** Executing main script... ***')
 disp('Defining four bar start geometry')
 % Create four bar geometry struct
 % Lengths
-b4.rf = 100; % Frame length
-b4.rl = 60; % Link length
-b4.rj = 50; % Jaw length
-b4.rs = 70; % Shank length
+b4.rf = 75.7; % Frame length
+b4.rl = 55.5; % Link length
+b4.rj = 24.26; % Jaw length
+b4.rs = 15.5; % Shank length
 % Angles
 b4.input_a = deg2rad(100); % Input angle to system. Independent variable
 b4.output_a = deg2rad(80); % Ángle between frame and jaw. Initial guess for solver
@@ -103,15 +103,16 @@ b4.crosslink_a = deg2rad(10); % Anlge between frame and shank. Initial guess for
 %b4.crosslink_a = deg2rad(6.04); % Anlge between frame and shank. Initial guess for solver
 
 disp('Calculating and plotting positions')
-input_min = deg2rad(90)
-input_max = deg2rad(130)
+input_min = deg2rad(150)
+input_max = deg2rad(160)
 
 hf = figure('visible', 'off');
 axis([-10 110 -100 10])
 axis manual
 
-angles = input_min:0.01:input_max;
+angles = input_min:0.005:input_max;
 for ii = 1:length(angles) % Ugly quick fix
+    printf('Plotting %d/%d\n', ii, length(angles))
     i = angles(ii); % Ugly quick fix
     axis([-10 110 -100 10])
     axis manual
@@ -132,7 +133,7 @@ for ii = 1:length(angles) % Ugly quick fix
     % Plot jaw
     plot([b4.rf - cos(b4.output_a)*b4.rj, b4.rf], [-sin(b4.output_a)*b4.rj, 0])
 
-    pause(0.1)
+    pause(0.001)
     drawnow
 
     plname = sprintf('./images/fourbar%d.png', ii);
